@@ -1,69 +1,99 @@
 <script>
-function getNextDisplay() {
-    fetch("/get_next_screen", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) { throw Error(res.statusText); }
-        return res.json()
+  // clientID equal -1 if user disconnected (to reload )
+  clientID = -1
+  viewData = []
+  targetImgId = -1
+  function getNextDisplay() {
+      const reqData = {
+        targetImgId: targetImgId,
+        viewData: viewData,
+      };
+      fetch("/get_next_screen?clientID=" + clientID, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqData),
       })
-      .then((data) => {
-        // Handle error
+        .then((res) => {
+          if (!res.ok) { throw Error(res.statusText); }
+          return res.json()
+        })
+        .then((data) => {
+          // Handle error
 
-        if (data.error) {
-          throw Error(data.error.message);
-        }
-        
-        viewData = data.viewData;
-        populateDisplay(viewData);
+          if (data.error) {
+            throw Error(data.error.message);
+          }
+          
+          viewData = data.viewData;
+          clientID = data.clientID
+          populateDisplay();
 
-      })
-      .catch((e) => {
-        console.log("Error: " + JSON.stringify(e.message));
-        showGlobalMessage(
-          "Request failed!",
-          JSON.stringify(e.message),
-          5000,
-          "e"
-        );
-      });
-  }
-  function getThumbPrototype(likedStr, actionStr, id, src) {
-    return `<li 
-      class="frame-in-grid small-6 medium-4 large-2 cell
-      ${likedStr}"
-      data-frame-id="${id}"
-      style="background-image: url('${src}'); background-size: 100% 100%;"
-    >
-      <div class="just-clicker">
-        <a 
-          class="button frame-in-grid-hover-btn submit-frame" 
-          onclick="submitImage(${id});event.cancelBubble=true;" 
-          title="Submit this frame.">
-          S
-        </a>
-      </div>
-    </li>`;
-  }
-  function populateDisplay(frames) {
-    const elem = document.getElementById("frameGrid");
-    console.log(frames)
-    console.log(frames[1])
-    let elemHtml = elem.innerHTML;
-    // Iterate over all the frames
-    for (let i = 0; i < frames.length; ++i) {
-      let likedStr = "";
-      if (frames[i].liked) {
-        likedStr = "liked";
-      }
-      console.log(frames[i].id, frames[i].src, frames[i].vId);
-      elemHtml += getThumbPrototype(likedStr, '', frames[i].id, frames[i].src);
+        })
+        .catch((e) => {
+          console.log("Error: " + JSON.stringify(e.message));
+          showGlobalMessage(
+            "Request failed!",
+            JSON.stringify(e.message),
+            5000,
+            "e"
+          );
+        });
     }
-    elem.innerHTML = elemHtml;
-}
+    function getThumbPrototype(likedStr, actionStr, id, src) {
+      return `<li 
+        class="frame-in-grid small-6 medium-4 large-2 cell
+        ${likedStr}"
+        onclick="${actionStr}" 
+        data-frame-id="${id}"
+        style="background-image: url('${src}'); background-size: 100% 100%;"
+      >
+      </li>`;
+    }
+    function populateDisplay() {
+      const elem = document.getElementById("frameGrid");
+      frames = viewData; 
+      let elemHtml = "";
+      
+      document.getElementById("target_img").src = frames[0].src;
+      targetImgId = frames[0].id;
 
+      // Iterate over all the frames
+      for (let i = 1; i < frames.length; ++i) {
+        let likedStr = "";
+        let actionStr = `like(this, ${frames[i].id})`;
+        
+        elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+      }
+      elem.innerHTML = elemHtml;
+  }
+
+  function like(el, frameId) {
+    console.log("Frame ", frameId, "liked!" )
+
+    // Request input data
+    const reqData = {
+      frameId: frameId,
+    };
+
+    let liked = true;
+    if (el.classList.contains("liked")) {
+      el.classList.remove("liked");
+      liked = false;
+    }
+    else {
+      el.classList.add("liked");
+      liked = true;
+    }
+
+    // Update frames
+    for (let i = 1; i < frames.length; ++i) {
+      if(frames[i].id === frameId) {
+        frames[i].liked = liked;
+        break;
+      }
+    }
+  }
     
 </script>
