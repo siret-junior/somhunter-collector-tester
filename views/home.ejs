@@ -1,0 +1,81 @@
+<%- include('./common/header.ejs');%>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+<section class="ranker-grid-section grid-container">
+  <div class="grid-x grid-x align-center">
+
+    <!-- ===================================== -->
+    <!-- Left sidebar: Query builder -->
+    <!-- ===================================== -->
+    <div class="ranker-left-sidebar small-3 cell">
+
+      <section class="autocomplete-section ranker-single">
+        <form autocomplete="off" class="autocomplete-form grid-container">
+
+          <div class="grid-x align-left grid-padding-x">
+            <!-- Top buttons -->
+            <div class="small-6 cell">
+              <a class="button block-btn new-seach-btn" onclick="getNextDisplay()">Nové hledání</a>
+            </div>
+
+          </div>
+
+        </form>
+      </section>
+
+      <!-- ---------------------------------- -->
+      <!-- Control buttons-->
+      <!-- ---------------------------------- -->
+      <section class="section-control-buttons ">
+        <div class="grid-container">
+
+          <!-- Target -->
+          <div class="screen-btns grid-x align-left">
+
+            <span class="target-image-label">
+              Hledaný obrázek:
+            </span>
+
+            <img class="" id="target_img" style="height: 30vh;width: 30vw;"> </img>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- MAIN BODY: Image grid-->
+    <!-- ===================================== -->
+    <div id="frameGridWrapper"
+      class="ranker-right-sidebar image-grid-section image-browser-main-tiles small-9 cell grid-container">
+
+      <ul id="frameGrid" class="som-grid frame-grid grid-x grid-x"></ul>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- ACCEPT DATA GATHERING -->
+    <!-- ===================================== -->
+    <div class="large reveal grid-x warning-window" id="modalAc" data-reveal data-src="999" data-overlay="false">
+
+      <h1>Upozornění</h1>
+      <p>
+        Spuštěním a používáním této webové aplikace souhlasím se sběrem interakcí při hledaní obrázku (tj. dotazy a
+        klikání myši) pro vědecke účely.
+      </p>
+      <button class="close-button" data-close aria-label="Close modal" type="button" style="top: auto;"
+        onclick="document.getElementById('modalAc').style.display = 'none'">
+        <span aria-hidden="true">Souhlasím</span>
+      </button>
+    </div>
+
+
+    
+</section>
+<!-- Include footer -->
+<%- include('./common/footer.ejs');%>
+
+<%- include('./event_handlers.ejs');%>

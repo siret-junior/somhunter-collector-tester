@@ -1,0 +1,69 @@
+<script>
+function getNextDisplay() {
+    fetch("/get_next_screen", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) { throw Error(res.statusText); }
+        return res.json()
+      })
+      .then((data) => {
+        // Handle error
+
+        if (data.error) {
+          throw Error(data.error.message);
+        }
+        
+        viewData = data.viewData;
+        populateDisplay(viewData);
+
+      })
+      .catch((e) => {
+        console.log("Error: " + JSON.stringify(e.message));
+        showGlobalMessage(
+          "Request failed!",
+          JSON.stringify(e.message),
+          5000,
+          "e"
+        );
+      });
+  }
+  function getThumbPrototype(likedStr, actionStr, id, src) {
+    return `<li 
+      class="frame-in-grid small-6 medium-4 large-2 cell
+      ${likedStr}"
+      data-frame-id="${id}"
+      style="background-image: url('${src}'); background-size: 100% 100%;"
+    >
+      <div class="just-clicker">
+        <a 
+          class="button frame-in-grid-hover-btn submit-frame" 
+          onclick="submitImage(${id});event.cancelBubble=true;" 
+          title="Submit this frame.">
+          S
+        </a>
+      </div>
+    </li>`;
+  }
+  function populateDisplay(frames) {
+    const elem = document.getElementById("frameGrid");
+    console.log(frames)
+    console.log(frames[1])
+    let elemHtml = elem.innerHTML;
+    // Iterate over all the frames
+    for (let i = 0; i < frames.length; ++i) {
+      let likedStr = "";
+      if (frames[i].liked) {
+        likedStr = "liked";
+      }
+      console.log(frames[i].id, frames[i].src, frames[i].vId);
+      elemHtml += getThumbPrototype(likedStr, '', frames[i].id, frames[i].src);
+    }
+    elem.innerHTML = elemHtml;
+}
+
+    
+</script>
