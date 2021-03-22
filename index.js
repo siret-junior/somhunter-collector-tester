@@ -42,7 +42,7 @@ app.use((req, res, next) => {
   res.status(401).send("Authentication required.");
 });
 
-app.listen(3000, function(){
+app.listen(process.env.PORT || 3000, function(){
     console.log("Listening on port 3000!")
   });
 
