@@ -38,15 +38,13 @@ exports.getNextScreen = function (req, res) {
     for (let i = 1; i < viewData.length; ++i) {
       appendData += ',' + viewData[i].id + ',' + viewData[i].liked
     }
-
-    fs.appendFile('./logs/' + Date.now() + '.csv', appendData, function (err) {
-      if (err) throw err;
-      console.log('Saved!');
-    });
+    let stream = fs.createWriteStream('./logs/' + Date.now() + '.csv');
+    stream.write(appendData);
+    stream.end();
   } 
 
   let frameData = []
-  
+
   if (DisplayId < 50){
     
     const data = fs.readFileSync("./data/" + DisplayId, {encoding:'utf8', flag:'r'});
