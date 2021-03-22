@@ -29,10 +29,10 @@ exports.getNextScreen = function (req, res) {
   }
 
   // create log if user did not disconnected
-  if(clientID !== -1){
+  if(clientID !== - 1 && clientID < 50){
 
     // append data about user and session
-    let appendData = user + ',' + String(DisplayId - 1) + ',' + String(targetImgId);
+    let appendData = user + ',' + String(DisplayId - 1) + ',' + String(targetImgId) + ',' + String(Date.now());
 
     // append data about frame grid
     for (let i = 1; i < viewData.length; ++i) {
@@ -46,17 +46,24 @@ exports.getNextScreen = function (req, res) {
   } 
 
   let frameData = []
-  const data = fs.readFileSync("./data/" + DisplayId, {encoding:'utf8', flag:'r'});
- 
-  const allLines = data.split(/\r\n|\n/);
+  
+  if (DisplayId < 50){
+    
+    const data = fs.readFileSync("./data/" + DisplayId, {encoding:'utf8', flag:'r'});
+  
+    const allLines = data.split(/\r\n|\n/);
 
-  // Reading line by line
-  allLines.forEach((line) => {
-    var res = line.split(',');
+    // Reading line by line
+    allLines.forEach((line) => {
+      var res = line.split(',');
 
-    object = { id: Number(res[0]), src: res[1], liked: false}
-    frameData.push(object)
-  });
-  frameData = frameData.slice(0, 65);
+      object = { id: Number(res[0]), src: res[1], liked: false}
+      frameData.push(object)
+    });
+    frameData = frameData.slice(0, 65);
+  }
+  else {
+    DisplayId = 50
+  }
   res.status(200).jsonp({ viewData: frameData, clientID: DisplayId });
 };
