@@ -3,7 +3,12 @@ const fs = require('fs');
 
 // Init db connection
 // const db_url = "postgres://test_user:Test1234@localhost/test_db";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);

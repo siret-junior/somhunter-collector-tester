@@ -2,7 +2,12 @@ const { Pool } = require('pg');
 
 // Init db connection
 // const db_url = "postgres://test_user:Test1234@localhost/test_db";
-const pool = new Pool({connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+	ssl: {
+		rejectUnauthorized: false
+	}
+});
 
 const up_sql = `create table user_progress (
     id           integer PRIMARY KEY,
@@ -91,33 +96,33 @@ const user_sql = `insert into user_progress (id, user_string, display, last_modi
 
 exports.prepare_db = function (users) {
 
-    pool.query(up_sql, [], (err, res) => {
-        if (err) 
-            console.log(err);
-        else
-            console.log('User progress created');
-    });
+	pool.query(up_sql, [], (err, res) => {
+		if (err)
+			console.log(err);
+		else
+			console.log('User progress created');
+	});
 
-    pool.query(ds_sql, [], (err, res) => {
-        if (err) 
-            console.log(err);
-        else
-            console.log('Display selection created');
-    });
+	pool.query(ds_sql, [], (err, res) => {
+		if (err)
+			console.log(err);
+		else
+			console.log('Display selection created');
+	});
 
-    pool.query(seq_sql, [], (err, res) => {
-        if (err) 
-            console.log(err);
-        else
-            console.log('Sequence created');
-    });
+	pool.query(seq_sql, [], (err, res) => {
+		if (err)
+			console.log(err);
+		else
+			console.log('Sequence created');
+	});
 
-    for (var el in users){
-        pool.query(user_sql, [el], (err, res) => {
-            if (err) 
-                console.log(err);
-            else
-                console.log('user ' + res + ' created');
-        });
-    }
+	for (var el in users) {
+		pool.query(user_sql, [el], (err, res) => {
+			if (err)
+				console.log(err);
+			else
+				console.log('user ' + res + ' created');
+		});
+	}
 }
