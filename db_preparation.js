@@ -2,7 +2,12 @@ const { Pool } = require('pg');
 
 // Init db connection
 // const db_url = "postgres://test_user:Test1234@localhost/test_db";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+	connectionString: process.env.DATABASE_URL,
+	ssl: {
+		rejectUnauthorized: false
+	}
+});
 
 const up_sql = `create table user_progress (
     id           integer PRIMARY KEY,
