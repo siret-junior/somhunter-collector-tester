@@ -101,6 +101,24 @@ exports.prepare_db = function (users) {
 			console.log(err);
 		else
 			console.log('User progress created');
+
+
+		pool.query(seq_sql, [], (err, res) => {
+			if (err)
+				console.log(err);
+			else
+				console.log('Sequence created');
+				
+			for (var el in users) {
+				pool.query(user_sql, [el], (err, res) => {
+					if (err)
+						console.log(err);
+					else
+						console.log('user ' + res + ' created');
+				});
+			}
+		});
+
 	});
 
 	pool.query(ds_sql, [], (err, res) => {
@@ -109,20 +127,4 @@ exports.prepare_db = function (users) {
 		else
 			console.log('Display selection created');
 	});
-
-	pool.query(seq_sql, [], (err, res) => {
-		if (err)
-			console.log(err);
-		else
-			console.log('Sequence created');
-	});
-
-	for (var el in users) {
-		pool.query(user_sql, [el], (err, res) => {
-			if (err)
-				console.log(err);
-			else
-				console.log('user ' + res + ' created');
-		});
-	}
 }
