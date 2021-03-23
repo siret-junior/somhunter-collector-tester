@@ -1,48 +1,50 @@
 <script>
-  // clientID equal -1 if user disconnected (to reload )
-  clientID = -1
+  // displayId equal -1 if user disconnected (to reload )
+  displayId = -1
   viewData = []
   targetImgId = -1
   function getNextDisplay() {
-      const reqData = {
-        targetImgId: targetImgId,
-        viewData: viewData,
-      };
-      fetch("/get_next_screen?clientID=" + clientID, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reqData),
+    const reqData = {
+      targetImgId: targetImgId,
+      viewData: viewData,
+      displayId: displayId
+    };
+    fetch("/get_next_screen", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqData),
+    })
+      .then((res) => {
+        if (!res.ok) { throw Error(res.statusText); }
+        return res.json()
       })
-        .then((res) => {
-          if (!res.ok) { throw Error(res.statusText); }
-          return res.json()
-        })
-        .then((data) => {
-          // Handle error
+      .then((data) => {
+        // Handle error
 
-          if (data.error) {
-            throw Error(data.error.message);
-          }
-          
-          viewData = data.viewData;
-          clientID = data.clientID
-          populateDisplay();
+        if (data.error) {
+          throw Error(data.error.message);
+        }
 
-        })
-        .catch((e) => {
-          console.log("Error: " + JSON.stringify(e.message));
-          showGlobalMessage(
-            "Request failed!",
-            JSON.stringify(e.message),
-            5000,
-            "e"
-          );
-        });
-    }
-    function getThumbPrototype(likedStr, actionStr, id, src) {
-      return `<li 
+        viewData = data.viewData;
+        displayId = data.displayId
+        populateDisplay();
+
+      })
+      .catch((e) => {
+        console.log("Error: " + JSON.stringify(e.message));
+        showGlobalMessage(
+          "Request failed!",
+          JSON.stringify(e.message),
+          5000,
+          "e"
+        );
+      });
+  }
+
+  function getThumbPrototype(likedStr, actionStr, id, src) {
+    return `<li 
         class="frame-in-grid small-6 medium-4 large-2 cell
         ${likedStr}"
         onclick="${actionStr}" 
@@ -50,27 +52,28 @@
         style="background-image: url('${src}'); background-size: 100% 100%;"
       >
       </li>`;
-    }
-    function populateDisplay() {
-      const elem = document.getElementById("frameGrid");
-      frames = viewData; 
-      let elemHtml = "";
-      
-      document.getElementById("target_img").src = frames[0].src;
-      targetImgId = frames[0].id;
+  }
 
-      // Iterate over all the frames
-      for (let i = 1; i < frames.length; ++i) {
-        let likedStr = "";
-        let actionStr = `like(this, ${frames[i].id})`;
-        
-        elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
-      }
-      elem.innerHTML = elemHtml;
+  function populateDisplay() {
+    const elem = document.getElementById("frameGrid");
+    frames = viewData;
+    let elemHtml = "";
+
+    document.getElementById("target_img").src = frames[0].src;
+    targetImgId = frames[0].id;
+
+    // Iterate over all the frames
+    for (let i = 1; i < frames.length; ++i) {
+      let likedStr = "";
+      let actionStr = `like(this, ${frames[i].id})`;
+
+      elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
+    }
+    elem.innerHTML = elemHtml;
   }
 
   function like(el, frameId) {
-    console.log("Frame ", frameId, "liked!" )
+    console.log("Frame ", frameId, "liked!")
 
     // Request input data
     const reqData = {
@@ -89,11 +92,47 @@
 
     // Update frames
     for (let i = 1; i < frames.length; ++i) {
-      if(frames[i].id === frameId) {
+      if (frames[i].id === frameId) {
         frames[i].liked = liked;
         break;
       }
     }
   }
-    
+
+
+  function initDisplay() {
+    fetch("/get_next_screen", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) { throw Error(res.statusText); }
+        return res.json()
+      })
+      .then((data) => {
+        // Handle error
+
+        if (data.error) {
+          throw Error(data.error.message);
+        }
+
+        viewData = data.viewData;
+        displayId = data.displayId
+        populateDisplay();
+
+      })
+      .catch((e) => {
+        console.log("Error: " + JSON.stringify(e.message));
+        showGlobalMessage(
+          "Request failed!",
+          JSON.stringify(e.message),
+          5000,
+          "e"
+        );
+      });
+  }
+
+  initDisplay();
 </script>
