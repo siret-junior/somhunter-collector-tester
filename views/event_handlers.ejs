@@ -120,18 +120,28 @@
 
         viewData = data.viewData;
         displayId = data.displayId
+        updateSolvedCounter();
         populateDisplay();
 
       })
       .catch((e) => {
-        console.log("Error: " + JSON.stringify(e.message));
-        showGlobalMessage(
-          "Request failed!",
-          JSON.stringify(e.message),
-          5000,
-          "e"
-        );
+        if (displayId == 49) {
+          displayId++;
+          showGlobalMessage("Gratulujeme!", "Gratulujeme, úspěšně jste dokončili anotaci.", 20000, 's');
+        } else if (displayId < 49) {
+          console.log("Error: " + JSON.stringify(e.message));
+          showGlobalMessage(
+            "Request failed!",
+            JSON.stringify(e.message),
+            5000,
+            "e"
+          );
+        }
       });
+  }
+
+  function updateSolvedCounter() {
+    document.getElementById("solved.counter").innerHTML = displayId;
   }
 
   initDisplay();
