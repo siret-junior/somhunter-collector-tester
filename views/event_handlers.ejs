@@ -70,6 +70,7 @@
       elemHtml += getThumbPrototype(likedStr, actionStr, frames[i].id, frames[i].src);
     }
     elem.innerHTML = elemHtml;
+    updateSolvedCounter();
   }
 
   function like(el, frameId) {
@@ -120,7 +121,6 @@
 
         viewData = data.viewData;
         displayId = data.displayId
-        updateSolvedCounter();
         populateDisplay();
 
       })
