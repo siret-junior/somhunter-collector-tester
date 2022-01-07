@@ -11,21 +11,21 @@ const pool = new Pool({
 });
 
 exports.prepare_db = function (users) {
-	const up_sql = fs.readFileSync("sql/user_progress_create.sql");
+	const up_sql = fs.readFileSync("sql/user_progress_create.sql", "utf-8");
 	pool.query(up_sql, [], (err, res) => {
 		if (err)
 			console.log(err);
 		else
 			console.log('User progress created');
 
-		const seq_sql = fs.readFileSync("sql/somsequence_create.sql");
+		const seq_sql = fs.readFileSync("sql/somsequence_create.sql", "utf-8");
 		pool.query(seq_sql, [], (err, res) => {
 			if (err)
 				console.log(err);
 			else
 				console.log('Sequence created');
 				
-			const user_sql = fs.readFileSync("sql/user_progress_insert.sql");
+			const user_sql = fs.readFileSync("sql/user_progress_insert.sql", "utf-8");
 			for (var el in users) {
 				pool.query(user_sql, [el], (err, res) => {
 					if (err)
@@ -38,7 +38,7 @@ exports.prepare_db = function (users) {
 
 	});
 
-	const ds_sql = fs.readFileSync("sql/display_selection_create.sql");
+	const ds_sql = fs.readFileSync("sql/display_selection_create.sql", "utf-8");
 	pool.query(ds_sql, [], (err, res) => {
 		if (err)
 			console.log(err);

@@ -32,7 +32,7 @@ exports.postNextScreen = function (req, response) {
     disp_sel_data.push(viewData[i].liked);
   }
 
-  fs.readFile('../sql/display_selection_insert.sql', (err, disp_sel_sql) => {
+  fs.readFile('sql/display_selection_insert.sql', "utf-8", (err, disp_sel_sql) => {
     pool.query(disp_sel_sql, disp_sel_data, (err, res) => {
       if (err)
         throw err;
@@ -40,7 +40,7 @@ exports.postNextScreen = function (req, response) {
       console.log('Display ', user, displayId, " is saved");
 
       // update user status
-      fs.readFile('../sql/user_progress_select.sql', (err, sql) => {
+      fs.readFile('sql/user_progress_select.sql', "utf-8", (err, sql) => {
         pool.query(sql, [user],
           (err, res) => {
             if (err)
@@ -62,7 +62,7 @@ exports.getNextScreen = function (req, response) {
 
   // Load current user progress
 
-  fs.readFile('../sql/user_progress_select.sql', (err, sql) => {
+  fs.readFile('sql/user_progress_select.sql', "utf-8", (err, sql) => {
     pool.query(sql, [user], (err, res) => {
       if (err)
         throw err;

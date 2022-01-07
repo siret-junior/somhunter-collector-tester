@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "PORT=3000 node index.js",
+    "start:local": "DATABASE_URL=postgres://test_user:Test1234@localhost/test_db PORT=3000 node index.js"
   },
   "repository": {
     "type": "git",
