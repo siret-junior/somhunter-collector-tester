@@ -1,0 +1,1 @@
+update user_progress set display = display + 1, last_modif = CURRENT_DATE WHERE user_string = $1;
